@@ -1,7 +1,7 @@
 # ECM2414_CA
 Software development CA
 
-###Development Plan
+### Development Plan
 Create thread-safe classes for
 - Card
     Via synchronisatoon/immutable properties
