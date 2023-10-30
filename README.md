@@ -4,7 +4,7 @@ Software development CA
 ### Development Plan
 Create thread-safe classes for
 - Card
-    Via synchronisatoon/immutable properties
+-     Via synchronisatoon/immutable properties
     Attributes including faceValue
 - CardDeck
     Will be shared amongst players.
