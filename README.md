@@ -4,23 +4,23 @@ Software development CA
 ### Development Plan
 Create thread-safe classes for
 - Card
--     Via synchronisatoon/immutable properties
-    Attributes including faceValue
+    - Via synchronisatoon/immutable properties
+    - Attributes including faceValue
 - CardDeck
-    Will be shared amongst players.
+    - Will be shared amongst players.
 - Player
-    Attributes include
-    Methods include:
-      Drawing from the left cardDeck
-      Discarding cards via the right cardDeck
-    Game Strategy 
+    - Attributes include
+    - Methods include:
+      - Drawing from the left cardDeck
+      - Discarding cards via the right cardDeck
+    - Game Strategy 
 - CardGame
-    Will be the main class & game entry point
-    Reads no. of players
-    Initialise the game, distributes hands & fill the cardDecks
-    Game logic including monitoring the game state, win/lose conditions
-    Handle game termination
-    Create player output files and deck output files as described.
+    - Will be the main class & game entry point
+    - Reads no. of players
+    - Initialise the game, distributes hands & fill the cardDecks
+    - Game logic including monitoring the game state, win/lose conditions
+    - Handle game termination
+    - Create player output files and deck output files as described.
 
 **Input Pack File**:
 The input pack file should contain 8n rows of non-negative integers. You can read and parse this file in the `CardGame` class.
