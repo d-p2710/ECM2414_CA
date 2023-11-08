@@ -1,7 +1,6 @@
 import java.util.Scanner;
 
 public class CardGame {
-    //gyyu
     private static volatile GardGame instance;
     private int numPlayers;
     private Player[] players;
