@@ -1,16 +1,30 @@
 import java.util.Scanner;
+
 public class CardGame {
-    int numPlayers;
-    // list of players
+    private static volatile GardGame instance;
+    private int numPlayers;
     private Player[] players;
-    // list of decks
     private CardDeck[] decks;
-    // list of cards in the pack
     private List<Card> pack;
-    public CardGame(int numPlayers) {
+
+    private CardGame (int numPlayers) {
+        this.numPlayers= numPlayers;
         players = new Player[numPlayers];
         decks = new CardDeck[numPlayers];
         pack = new ArrayList<>();
+    }
+
+    public static CardGame getInstance(int numPlayers) {
+        CardGame result = instance:
+        if (result == null) {
+            synchronized (CardGame.class) {
+                result = instance;
+                if (result == null) {
+                    instance = result = new CardGame(numPlayers);
+                }
+            }
+        }
+        return result;
     }
 
     public void startGame() {
@@ -19,7 +33,7 @@ public class CardGame {
             decks[i] = new CardDeck(i + 1);
         }
     }
-    /*private void loadFile(String fileName) {
+    private void loadFile(String fileName) {
         try {
             File file = new File(inputFile());
             Scanner scanner = new Scanner(file);
@@ -44,7 +58,7 @@ public class CardGame {
         }
     }
 
-     */
+
 
     private String inputFile(){
         Scanner scanner = new Scanner(System.in);
@@ -66,6 +80,7 @@ public class CardGame {
         while ((countLines(fileName) != 8 * numPlayers) &&  {
             fileName = inputFile();
         }
+        return true
     }
 
 
@@ -76,7 +91,7 @@ public class CardGame {
         numPlayers = scanner.nextInt();
         scanner.close();
 
-        CardGame game = new CardGame(numPlayers);
+        CardGame game = CardGame.getInstance(numPlayers)
         game.startGame();
     }
 }
