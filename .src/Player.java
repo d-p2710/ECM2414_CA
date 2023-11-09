@@ -2,11 +2,23 @@ public class Player {
     private int playerID;
     private int preferredDenomination;
     private Card[] hand = new Card[4];
-    private int nonPreferredCardCount;
+    private int preferredCardCount;
     public Player(int playerID) {
         this.playerID = playerID;
         this.hand = new Card[4];
         this.preferredDenomination = playerID;
+    }
+
+    public int getPlayerID() {
+        return playerID;
+    }
+
+    public int getPreferredDenomination() {
+        return preferredDenomination;
+    }
+
+    public Card[] getHand() {
+        return hand;
     }
 
     public synchronized void addCard(Card card) {
@@ -27,4 +39,6 @@ public class Player {
     public synchronized void discardToRightDeck(CardDeck[] decks, int currentPlayerID) {
         // discard a non-preferred card to the right deck
     }
+
+    //
 }
