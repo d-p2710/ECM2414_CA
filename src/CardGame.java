@@ -16,7 +16,7 @@ public class CardGame {
     private Player[] players;
     private CardDeck[] decks;
     private List<Card> pack;
-    private int  [][] playersHands;
+    private int[][] playersHands;
 
     private CardGame (int numPlayers) {
         CardGame.numPlayers = numPlayers;
@@ -44,7 +44,7 @@ public class CardGame {
         try{
             validateNumPlayers();
             loadAndValidatePackFile();
-            allocateCards();
+            allocateCards(pack);
             checkInitialConditions();
             playGame();
         } catch (Exception e){
@@ -53,27 +53,6 @@ public class CardGame {
         initialisePlayersAndDecks();
     }
 
-    private void playGame() {
-    }
-
-    private void checkInitialConditions() {
-    }
-
-
-    private void allocateCards(CardList<Card> cards){
-        for ( int i=0; i<numPlayers*4; i++){
-            players[i%numPlayers].getHand().addCard(cards[i]);
-        }
-    }
-
-
-    private void initialisePlayersAndDecks(){
-        for (int i = 0; i < players.length; i++) {
-            players[i] = new Player(i + 1);
-            playersHands[i] = new players[i].getHand();
-            decks[i] = new CardDeck(i + 1);
-        }
-    }
 
     private void validateNumPlayers(){
         Scanner scanner = new Scanner(System.in);
@@ -85,7 +64,6 @@ public class CardGame {
             }
             numPlayers = scanner.nextInt();
         }while (numPlayers <1 || numPlayers> 10);
-        scanner.close();
     }
 
     private void loadAndValidatePackFile() throws FileNotFoundException{
@@ -97,7 +75,7 @@ public class CardGame {
                     throw new FileNotFoundException("Error: The card pack file was not found.");
                 }
                 checkFile(packFileName);
-                List<Card> pack = Files.readAllLines(file.toPath())
+                pack = Files.readAllLines(file.toPath())
                         .stream()
                         .map(String::trim)
                         .map(Integer::parseInt)
@@ -140,6 +118,33 @@ public class CardGame {
         return pack.stream().allMatch(card -> card.getValue() >=1);
     }
 
+    private void playGame() {
+    }
+
+    private void checkInitialConditions() {
+    }
+
+
+    private void allocateCards(List<Card> cards){
+        for ( int i=0; i<numPlayers; i++){
+            for (int j= 0; j<MAX_HAND_SIZE; j++){
+            players[i].getHand()[j]=cards.remove(0);
+            }
+        }
+        for (int i=0; i<numPlayers; i++){
+            for(int j=0; j<MAX_HAND_SIZE; j++){
+                decks[i].addCard(cards.remove(0));
+            }
+        }
+
+
+    private void initialisePlayersAndDecks(){
+        for (int i = 0; i < players.length; i++) {
+            players[i] = new Player(i + 1);
+            playersHands[i] = new players[i].getHand();
+            decks[i] = new CardDeck(i + 1);
+        }
+    }
     public static void main(String[] args) {
         // Read the number of players from the command-line input
         Scanner scanner = new Scanner(System.in);
