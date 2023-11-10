@@ -53,6 +53,14 @@ public class CardGame {
         initialisePlayersAndDecks();
     }
 
+    private void initialisePlayersAndDecks(){
+        for (int i = 0; i < players.length; i++) {
+            players[i] = new Player(i + 1);
+            playersHands[i] = new players[i].getHand();
+            decks[i] = new CardDeck(i + 1);
+        }
+    }
+
 
     private void validateNumPlayers(){
         Scanner scanner = new Scanner(System.in);
@@ -137,14 +145,6 @@ public class CardGame {
             }
         }
 
-
-    private void initialisePlayersAndDecks(){
-        for (int i = 0; i < players.length; i++) {
-            players[i] = new Player(i + 1);
-            playersHands[i] = new players[i].getHand();
-            decks[i] = new CardDeck(i + 1);
-        }
-    }
     public static void main(String[] args) {
         // Read the number of players from the command-line input
         Scanner scanner = new Scanner(System.in);
