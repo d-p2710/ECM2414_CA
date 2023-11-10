@@ -21,7 +21,11 @@ public class Player {
         return hand;
     }
 
-    public synchronized void addCard(Card card) {
+    public void addCard(Card card){
+        this.hand.add(card);
+    }
+
+    public synchronized void drawCard(Card card) {
         if (card.getValue() == preferredDenomination) {
             // would need to discard a non preferred card to the right deck before adding a new card to the deck
             for (int i = 0; i < hand.length; i++) {
