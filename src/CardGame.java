@@ -8,9 +8,10 @@ import java.util.Scanner;
 import java.util.stream.Stream;
 
 public class CardGame {
+    public static final int MAX_HAND_SIZE = 4;
     // CardGame is a singleton class as once instantiated we don't want multiple games running only one at a given time.
     private static volatile CardGame instance;
-    private static final int MAX_HAND_SIZE=4;
+
     private static int numPlayers;
     private Player[] players;
     private CardDeck[] decks;

@@ -1,12 +1,23 @@
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Player {
-    private int playerID;
-    private int preferredDenomination;
-    private Card[] hand = new Card[4];
+    public int playerID;
+    public int preferredDenomination;
+    private Card[] hand;
+    private FileWriter outputFile;
     private int preferredCardCount;
+
     public Player(int playerID) {
         this.playerID = playerID;
-        this.hand = new Card[4];
         this.preferredDenomination = playerID;
+        this.hand = new Card[CardGame.MAX_HAND_SIZE];
+        try{
+            String outputFileName = "Player" +playerID+ "_output.txt";
+            this.outputFile=new FileWriter(outputFileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public int getPlayerID() {
@@ -21,8 +32,34 @@ public class Player {
         return hand;
     }
 
+    public void updateOutputFile(){
+        try{
+            for (Card card : hand){
+                if (card != null){
+                    outputFile.write(card.getValue()+"");
+                }}
+            //Flush ensures data is written immediately
+            outputFile.write("\n");
+            outputFile.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void closeOutputFile(){
+        try{
+            outputFile.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
     public void addCard(Card card){
         this.hand.add(card);
+    }
+
+    private boolean checkWinCondition(){
+        return true;
     }
 
     public synchronized void drawCard(Card card) {
