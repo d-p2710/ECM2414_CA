@@ -40,7 +40,6 @@ public class CardGame {
         return result;
     }
 
-
     public void startGame() {
         try{
             validateNumPlayers();
@@ -61,7 +60,6 @@ public class CardGame {
             decks[i] = new CardDeck(i + 1);
         }
     }
-
 
     private void validateNumPlayers(){
         Scanner scanner = new Scanner(System.in);
@@ -145,7 +143,7 @@ public class CardGame {
                 decks[i].addCard(cards.remove(0));
             }
         }
-
+      
     public static void main(String[] args) {
         // Read the number of players from the command-line input
         Scanner scanner = new Scanner(System.in);

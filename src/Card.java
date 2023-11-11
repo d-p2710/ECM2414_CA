@@ -5,7 +5,7 @@ public class Card {
     private int cardID;
     private int value;
     private static int totalCardNumber = 0;
-
+  
     public static List<Card> cards = new ArrayList<>();
     public Card(int value) {
         this.cardID = totalCardNumber++;
