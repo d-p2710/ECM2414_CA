@@ -10,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 
 public class CardGame {
-    public static final int MAX_HAND_SIZE = 4;
     // CardGame is a singleton class as once instantiated we don't want multiple games running only one at a given time.
     private static volatile CardGame instance;
 
@@ -85,20 +84,6 @@ public class CardGame {
         decks = new CardDeck[numPlayers];
     }
 
-    public static CardGame getInstance(int numPlayers) {
-        /*uses the double-check locking idiom to reduce overhead of acquiring a lock by testing criterion without having the lock */
-        CardGame result = instance;
-        if (result == null) {
-            synchronized (CardGame.class) {
-                result = instance;
-                if (result == null) {
-                    instance = result = new CardGame(numPlayers);
-                }
-            }
-        }
-        return result;
-    }
-
     public void startGame(int[] pack) {
         try {
             initialisePlayersAndDecks(numPlayers);
@@ -132,6 +117,24 @@ public class CardGame {
             index++;
 
         }
+    }
+    public static boolean checkWinCondition(Card[] hand) {
+        if (hand == null || hand.length == 0) {
+            // Handle edge cases, like an empty array or null reference
+            return false;
+        }
+
+        int firstNumber = hand[0];
+
+        for (int i = 1; i < hand.length; i++) {
+            if (hand[i].getValue() != firstNumber) {
+                // If any number is different, return false
+                return false;
+            }
+        }
+
+        // All numbers are the same
+        return true;
     }
 
 
