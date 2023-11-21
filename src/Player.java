@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 //
 
-public class Player{
+public class Player extends Thread{
     public int playerID;
     public int preferredDenomination;
     private ArrayList<Card> hand;
@@ -23,24 +23,20 @@ public class Player{
             e.printStackTrace();
         }
     }
-
     public int getPlayerID() {
         return playerID;
     }
-
     public int getPreferredDenomination() {
         return preferredDenomination;
     }
     public void setRHSDeckId(int RHSDeckId) {this.RHSDeckId = RHSDeckId;}
     public void setLHSDeckId(int LHSDeckId) {this.LHSDeckId = LHSDeckId;}
-
     public void addCardtoHand(int index, Card card){
         this.hand.set(index, card);
     }
     public ArrayList<Card> getHand() {
         return hand;
     }
-
     public void updateOutputFile(){
         try{
             outputFile.write("player " + this.playerID + " current hand is ");
@@ -55,7 +51,6 @@ public class Player{
             e.printStackTrace();
         }
     }
-
     public void closeOutputFile(){
         try{
             outputFile.close();
@@ -73,8 +68,6 @@ public class Player{
         //has to check win condition before this is called, so shouldnt return -1
         return -1;
     }
-
-
     public Card drawCard(ArrayList<Card> deck, int deckID) throws InterruptedException, IOException {
         while (true) {
             synchronized (this) {
@@ -93,8 +86,16 @@ public class Player{
     }
 
     public synchronized void discardToRightDeck(ArrayList<Card> deck, Card cardToDiscard, int deckID) throws InterruptedException, IOException {
-        deck.add(cardToDiscard);
-        outputFile.write("player "+this.playerID + " discards a " + cardToDiscard + " to deck " + deckID + "\n");
+        while(true) {
+            synchronized(this){
+                while(hand.size() < 4) {
+                    wait();
+                }
+                deck.add(cardToDiscard);
+                outputFile.write("player "+this.playerID + " discards a " + cardToDiscard + " to deck " + deckID + "\n");
+                notify();
+            }
+        }
     }
 
 }

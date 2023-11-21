@@ -14,12 +14,15 @@ public class CardGame {
     private static CardGame instance;
 
     // Private constructor to prevent instantiation from outside
-    private CardGame() {
+    private CardGame(int numPlayers){
+        CardGame.numPlayers = numPlayers;
+        players = new ArrayList<Player>();
+        decks = new ArrayList<CardDeck>();
     }
 
     public static CardGame getInstance() {
         if (instance == null) {
-            instance = new CardGame();
+            instance = new CardGame(numPlayers);
         }
         return instance;
     }
@@ -76,30 +79,31 @@ public class CardGame {
 
     private static int[] readFileIntoPack(int n, String filePath) throws IOException{
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            for (int i = 0; i < 8 * n; i++) {
+            int count = 0;
+            while ((reader.readLine()) != null) {
                 String line = reader.readLine();
                 if (line == null) {
                     throw new IOException("Input pack file is incomplete.");
                 }
                 int value = Integer.parseInt(line);
-                pack[i] = value;
-
+                pack[count] = value;
+                count++;
+            }
+            if (count < 8 * numPlayers) {
+                throw new IOException("Input pack file is incomplete.");
             }
         }
         return pack;
-    }
-
-    private CardGame(int numPlayers) {
-        CardGame.numPlayers = numPlayers;
-        players = new ArrayList<Player>();
-        decks = new ArrayList<CardDeck>();
     }
 
     public void startGame(int[] pack) {
         try {
             initialisePlayersAndDecks(numPlayers);
             allocateCards(pack);
-            //playGame();
+            for (Player player : players) {
+                Thread thread = new Thread(player);
+                thread.start();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -147,7 +151,6 @@ public class CardGame {
                 return false;
             }
         }
-
         // All numbers are the same
         return true;
     }
