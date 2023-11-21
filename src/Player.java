@@ -2,17 +2,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 //
 
-public class Player {
+public class Player implements Runnable{
     public int playerID;
     public int preferredDenomination;
-    private Card[] hand;
+    private ArrayList<Card> hand;
     private FileWriter outputFile;
     private int preferredCardCount;
+    private int LHSDeckId;
+    private int RHSDeckId;
 
     public Player(int playerID) {
         this.playerID = playerID;
         this.preferredDenomination = playerID;
-        this.hand = new Card[CardGame.MAX_HAND_SIZE];
+        this.hand = new ArrayList<Card>();
         try{
             String outputFileName = "Player" +playerID+ "_output.txt";
             this.outputFile=new FileWriter(outputFileName);
@@ -28,16 +30,22 @@ public class Player {
     public int getPreferredDenomination() {
         return preferredDenomination;
     }
+    public void setRHSDeckId(int RHSDeckId) {this.RHSDeckId = RHSDeckId;}
+    public void setLHSDeckId(int LHSDeckId) {this.LHSDeckId = LHSDeckId;}
 
+    public void addCardtoHand(int index, Card card){
+        this.hand[index] = card;
+    }
     public Card[] getHand() {
         return hand;
     }
 
     public void updateOutputFile(){
         try{
+            outputFile.write("player " + this.playerID + " current hand is ");
             for (Card card : hand){
                 if (card != null){
-                    outputFile.write(card.getValue()+"");
+                    outputFile.write(card.getValue()+" ");
                 }}
             //Flush ensures data is written immediately
             outputFile.write("\n");
@@ -54,33 +62,31 @@ public class Player {
             e.printStackTrace();
         }
     }
-
-    public void addCard(Card card){
-        this.hand.add(card);
-    }
-
-    private boolean checkWinCondition(){
-        return true;
-    }
-
-    public synchronized void drawCard(Card card) {
-        if (card.getValue() == preferredDenomination) {
-            // would need to discard a non preferred card to the right deck before adding a new card to the deck
-            for (int i = 0; i < hand.length; i++) {
-                if (hand[i] == null) {
-                    hand[i] = card;
-                    return;
-                }
+    //returns the index of the card to be discarded.
+    private int chooseCardToDiscard(Card[] hand) {
+        for (int i = 0; i< hand.length;i++){
+            if (hand[i].getValue() != preferredDenomination) {
+                return i
             }
-        } else {
-            // discard to the right deck
-            if (nonPreferredCardCount)
         }
+        //has to check win condition before this is called, so shouldnt return -1
+        return -1
     }
 
-    public synchronized void discardToRightDeck(CardDeck[] decks, int currentPlayerID) {
-        // discard a non-preferred card to the right deck
+    public synchronized Card drawCard(Card[] deck, int deckID) {
+        if (!deck.isEmpty()){
+            int drawnCard = deck.remove(0);
+        }
+        outputFile.write("player "+this.playerID + " draws a " + drawnCard + " from deck " + deckID + "\n";);
+        int empty_index = chooseCardToDiscard(hand);
+        Card cardToDiscard = hand[empty_index];
+        hand[empty_index] = drawnCard;
+        return cardToDiscard;
     }
 
-    //
+    public synchronized void discardToRightDeck(Card[] deck, Card cardToDiscard, int deckID) {
+        deck.add(cardToDiscard);
+        outputFile.write("player "+this.playerID + " discards a " + cardToDiscard + " to deck " + deckID + "\n";);
+    }
+
 }
