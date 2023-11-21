@@ -1,11 +1,6 @@
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Stream;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
@@ -30,7 +25,7 @@ public class CardGame {
     private static int numPlayers;
     private ArrayList<Player> players;
     private ArrayList<CardDeck> decks;
-    private static int[] pack;
+    private static ArrayList<Integer> pack;
     public static void main(String[] args) throws IOException {
         // Read the number of players from the command-line input
         Scanner scanner = new Scanner(System.in);
@@ -77,26 +72,22 @@ public class CardGame {
         }
     }
 
-    private static int[] readFileIntoPack(int n, String filePath) throws IOException{
+    private static ArrayList<Integer> readFileIntoPack(int n, String filePath) throws IOException{
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            int count = 0;
-            while ((reader.readLine()) != null) {
+            for (int i = 0; i < 8 * n; i++) {
                 String line = reader.readLine();
                 if (line == null) {
                     throw new IOException("Input pack file is incomplete.");
                 }
                 int value = Integer.parseInt(line);
-                pack[count] = value;
-                count++;
-            }
-            if (count < 8 * numPlayers) {
-                throw new IOException("Input pack file is incomplete.");
+                pack.add(value);
+
             }
         }
         return pack;
     }
 
-    public void startGame(int[] pack) {
+    public void startGame(ArrayList<Integer> pack) {
         try {
             initialisePlayersAndDecks(numPlayers);
             allocateCards(pack);
@@ -121,17 +112,17 @@ public class CardGame {
         }
     }
 
-    private void allocateCards(int[] pack) {
+    private void allocateCards(ArrayList<Integer> pack) {
         int index = 0;
         for (int i = 0; i < numPlayers * 4; i++) {
-            Card card = new Card(index, pack[index]);
+            Card card = new Card(index, pack.get(index));
             for (int j = 0; j < 4; j++) {
                 players.get(i).addCardtoHand(j,card);
             }
             index++;
         }
-        for (int i = 0; i < pack.length - (numPlayers* 4); i++) {
-            Card card = new Card(index, pack[index]);
+        for (int i = 0; i < pack.size() - (numPlayers* 4); i++) {
+            Card card = new Card(index, pack.get(index));
             decks.get(i).addCardtoDeck(card);
             index++;
 
