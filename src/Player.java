@@ -60,7 +60,7 @@ public class Player {
         }
     }
     //returns the index of the card to be discarded.
-    private int chooseCardToDiscard(int[] hand) {
+    private int chooseCardToDiscard(Card[] hand) {
         for (int i = 0; i< hand.length;i++){
             if (hand[i].getValue() != preferredDenomination) {
                 return i
@@ -70,7 +70,7 @@ public class Player {
         return -1
     }
 
-    public synchronized void drawCard(Card[] deck, int deckID) {
+    public synchronized Card drawCard(Card[] deck, int deckID) {
         if (!deck.isEmpty()){
             int drawnCard = deck.remove(0);
         }
