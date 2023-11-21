@@ -11,7 +11,7 @@ public class CardDeck {
         this.deck = new ArrayList<>();
     }
     public int getDeckID(){return deckID;}
-    public Card getDeck(){return deck;}
+    public ArrayList<Card> getDeck(){return deck;}
 
     public void addCardtoDeck(Card card) {
         deck.add(card);

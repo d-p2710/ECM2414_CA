@@ -1,8 +1,9 @@
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 //
 
-public class Player implements Runnable{
+public class Player{
     public int playerID;
     public int preferredDenomination;
     private ArrayList<Card> hand;
@@ -34,9 +35,9 @@ public class Player implements Runnable{
     public void setLHSDeckId(int LHSDeckId) {this.LHSDeckId = LHSDeckId;}
 
     public void addCardtoHand(int index, Card card){
-        this.hand[index] = card;
+        this.hand.set(index, card);
     }
-    public Card[] getHand() {
+    public ArrayList<Card> getHand() {
         return hand;
     }
 
@@ -63,30 +64,37 @@ public class Player implements Runnable{
         }
     }
     //returns the index of the card to be discarded.
-    private int chooseCardToDiscard(Card[] hand) {
-        for (int i = 0; i< hand.length;i++){
-            if (hand[i].getValue() != preferredDenomination) {
-                return i
+    private int chooseCardToDiscard(ArrayList<Card> hand) {
+        for (int i = 0; i< hand.size();i++){
+            if (hand.get(i).getValue() != preferredDenomination) {
+                return i;
             }
         }
         //has to check win condition before this is called, so shouldnt return -1
-        return -1
+        return -1;
     }
 
-    public synchronized Card drawCard(Card[] deck, int deckID) {
-        if (!deck.isEmpty()){
-            int drawnCard = deck.remove(0);
+
+    public Card drawCard(ArrayList<Card> deck, int deckID) throws InterruptedException, IOException {
+        while (true) {
+            synchronized (this) {
+                while (deck.isEmpty()) {
+                    wait();
+                }
+                Card drawnCard = deck.remove(0);
+                outputFile.write("player " + this.playerID + " draws a " + drawnCard + " from deck " + deckID + "\n");
+                int empty_index = chooseCardToDiscard(hand);
+                Card cardToDiscard = hand.get(empty_index);
+                hand.set(empty_index, drawnCard);
+                return cardToDiscard;
+
+            }
         }
-        outputFile.write("player "+this.playerID + " draws a " + drawnCard + " from deck " + deckID + "\n";);
-        int empty_index = chooseCardToDiscard(hand);
-        Card cardToDiscard = hand[empty_index];
-        hand[empty_index] = drawnCard;
-        return cardToDiscard;
     }
 
-    public synchronized void discardToRightDeck(Card[] deck, Card cardToDiscard, int deckID) {
+    public synchronized void discardToRightDeck(ArrayList<Card> deck, Card cardToDiscard, int deckID) throws InterruptedException, IOException {
         deck.add(cardToDiscard);
-        outputFile.write("player "+this.playerID + " discards a " + cardToDiscard + " to deck " + deckID + "\n";);
+        outputFile.write("player "+this.playerID + " discards a " + cardToDiscard + " to deck " + deckID + "\n");
     }
 
 }

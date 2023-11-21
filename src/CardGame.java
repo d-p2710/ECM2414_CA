@@ -11,7 +11,18 @@ import java.io.FileReader;
 
 public class CardGame {
     // CardGame is a singleton class as once instantiated we don't want multiple games running only one at a given time.
-    private static volatile CardGame instance;
+    private static CardGame instance;
+
+    // Private constructor to prevent instantiation from outside
+    private CardGame() {
+    }
+
+    public static CardGame getInstance() {
+        if (instance == null) {
+            instance = new CardGame();
+        }
+        return instance;
+    }
 
     private static int numPlayers;
     private ArrayList<Player> players;
@@ -38,7 +49,7 @@ public class CardGame {
             }
         }
         pack = readFileIntoPack(numPlayers,filePath);
-        CardGame game = CardGame.getInstance(numPlayers);
+        CardGame game = CardGame.getInstance();
         game.startGame(pack);
     }
 
@@ -80,8 +91,8 @@ public class CardGame {
 
     private CardGame(int numPlayers) {
         CardGame.numPlayers = numPlayers;
-        players = new Player[numPlayers];
-        decks = new CardDeck[numPlayers];
+        players = new ArrayList<Player>();
+        decks = new ArrayList<CardDeck>();
     }
 
     public void startGame(int[] pack) {
@@ -100,25 +111,24 @@ public class CardGame {
             players.add(player);
             CardDeck deck = new CardDeck(i + 1);
         }
-        for (int i = 0; i <numPlayers; i++;){
+        for (int i = 0; i <numPlayers; i++){
             players.get(i).setLHSDeckId((i + numPlayers) % numPlayers + 1);
             players.get(i).setRHSDeckId(i == 0 ? numPlayers : i + 1);
         }
     }
 
-
     private void allocateCards(int[] pack) {
         int index = 0;
-        for (int i = 0; i < numPlayers * MAX_HAND_SIZE; i++) {
+        for (int i = 0; i < numPlayers * 4; i++) {
             Card card = new Card(index, pack[index]);
-            for (int j = 0; j < MAX_HAND_SIZE; j++) {
-                players[i].addCardtoHand(j,card);
+            for (int j = 0; j < 4; j++) {
+                players.get(i).addCardtoHand(j,card);
             }
             index++;
         }
-        for (int i = 0; i < pack.length - (numPlayers* MAX_HAND_SIZE); i++) {
+        for (int i = 0; i < pack.length - (numPlayers* 4); i++) {
             Card card = new Card(index, pack[index]);
-            decks[i].addCardtoDeck(card);
+            decks.get(i).addCardtoDeck(card);
             index++;
 
         }
@@ -129,7 +139,7 @@ public class CardGame {
             return false;
         }
 
-        int firstNumber = hand[0];
+        int firstNumber = hand[0].getValue();
 
         for (int i = 1; i < hand.length; i++) {
             if (hand[i].getValue() != firstNumber) {
