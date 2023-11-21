@@ -2,12 +2,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 //
 
-public class Player {
+public class Player implements Runnable{
     public int playerID;
     public int preferredDenomination;
     private ArrayList<Card> hand;
     private FileWriter outputFile;
     private int preferredCardCount;
+    private int LHSDeckId;
+    private int RHSDeckId;
 
     public Player(int playerID) {
         this.playerID = playerID;
@@ -28,7 +30,8 @@ public class Player {
     public int getPreferredDenomination() {
         return preferredDenomination;
     }
-
+    public void setRHSDeckId(int RHSDeckId) {this.RHSDeckId = RHSDeckId;}
+    public void setLHSDeckId(int LHSDeckId) {this.LHSDeckId = LHSDeckId;}
 
     public void addCardtoHand(int index, Card card){
         this.hand[index] = card;

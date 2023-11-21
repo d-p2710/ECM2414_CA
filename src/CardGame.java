@@ -14,8 +14,8 @@ public class CardGame {
     private static volatile CardGame instance;
 
     private static int numPlayers;
-    private Player[] players;
-    private CardDeck[] decks;
+    private ArrayList<Player> players;
+    private ArrayList<CardDeck> decks;
     private static int[] pack;
     public static void main(String[] args) throws IOException {
         // Read the number of players from the command-line input
@@ -96,8 +96,13 @@ public class CardGame {
 
     private void initialisePlayersAndDecks(int numPlayers) {
         for (int i = 0; i < numPlayers; i++) {
-            players[i] = new Player(i + 1);
-            decks[i] = new CardDeck(i + 1);
+            Player player = new Player(i + 1);
+            players.add(player);
+            CardDeck deck = new CardDeck(i + 1);
+        }
+        for (int i = 0; i <numPlayers; i++;){
+            players.get(i).setLHSDeckId((i + numPlayers) % numPlayers + 1);
+            players.get(i).setRHSDeckId(i == 0 ? numPlayers : i + 1);
         }
     }
 
