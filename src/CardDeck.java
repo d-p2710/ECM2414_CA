@@ -8,10 +8,10 @@ public class CardDeck {
 
     public CardDeck(int deckID) {
         this.deckID = deckID;
-        this.deck = new ArrayList<>();
+        this.deck = new ArrayList<Card>();
     }
     public int getDeckID(){return deckID;}
-    public Card getDeck(){return deck;}
+    public ArrayList<Card> getDeck(){return deck;}
 
     public void addCardtoDeck(Card card) {
         deck.add(card);
