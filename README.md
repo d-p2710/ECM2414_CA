@@ -8,6 +8,9 @@ Create thread-safe classes for
     - Attributes including faceValue
 - CardDeck
     - Will be shared amongst players.
+    - Methods include:
+        - Addition of a card (maybe)
+        - Removal of a crad (maybe)
 - Player
     - Attributes include
     - Methods include:
