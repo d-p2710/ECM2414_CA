@@ -141,9 +141,4 @@ public class CardGame {
         // All numbers are the same
         return true;
     }
-
-
-
-
-
 }
