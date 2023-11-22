@@ -6,7 +6,7 @@ import java.io.FileReader;
 
 public class CardGame {
     // CardGame is a singleton class as once instantiated we don't want multiple games running only one at a given time.
-    private static CardGame instance;
+    private static volatile CardGame instance;
     // Private constructor to prevent instantiation from outside
     private static int numPlayers;
     private ArrayList<Player> players;
@@ -19,11 +19,18 @@ public class CardGame {
         decks = new ArrayList<CardDeck>();
     }
 
-    public static CardGame getInstance() {
-        if (instance == null) {
-            instance = new CardGame(numPlayers);
+    public static CardGame getInstance(int numPlayers) {
+        /*uses the double-check locking idiom to reduce overhead of acquiring a lock by testing criterion without having the lock */
+        CardGame result = instance;
+        if (result == null) {
+            synchronized (CardGame.class) {
+                result = instance;
+                if (result == null) {
+                    instance = result = new CardGame(numPlayers);
+                }
+            }
         }
-        return instance;
+        return result;
     }
     public static void main(String[] args) throws IOException {
         // Read the number of players from the command-line input
@@ -46,7 +53,7 @@ public class CardGame {
             }
         }
         pack = readFileIntoPack(numPlayers,filePath);
-        CardGame game = CardGame.getInstance();
+        CardGame game = CardGame.getInstance(numPlayers);
         game.startGame(pack);
     }
 
@@ -98,7 +105,7 @@ public class CardGame {
         }
     }
 
-    private void initialisePlayersAndDecks(int numPlayers) {
+    private void initialisePlayersAndDecks(int numPlayers) throws IOException {
         for (int i = 0; i < numPlayers; i++) {
             Player player = new Player(i + 1);
             players.add(player);

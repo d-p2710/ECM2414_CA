@@ -18,8 +18,7 @@ public class Card {
             return -1;
     }
 
-    public String toString()
-    {
+    public String toString() {
         return "Card [cardNumber=" + cardID + ", cardValue=" + value + "]";
     }
 
