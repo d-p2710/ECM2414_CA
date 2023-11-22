@@ -7,8 +7,12 @@ import java.io.FileReader;
 public class CardGame {
     // CardGame is a singleton class as once instantiated we don't want multiple games running only one at a given time.
     private static CardGame instance;
-
     // Private constructor to prevent instantiation from outside
+    private static int numPlayers;
+    private ArrayList<Player> players;
+    private ArrayList<CardDeck> decks;
+    private static ArrayList<Integer> pack=new ArrayList<>();
+
     private CardGame(int numPlayers){
         CardGame.numPlayers = numPlayers;
         players = new ArrayList<Player>();
@@ -21,11 +25,6 @@ public class CardGame {
         }
         return instance;
     }
-
-    private static int numPlayers;
-    private ArrayList<Player> players;
-    private ArrayList<CardDeck> decks;
-    private static ArrayList<Integer> pack;
     public static void main(String[] args) throws IOException {
         // Read the number of players from the command-line input
         Scanner scanner = new Scanner(System.in);
@@ -59,7 +58,6 @@ public class CardGame {
                     System.err.println("Error: Input pack file is incomplete.");
                     return;
                 }
-
                 try {
                     int value = Integer.parseInt(line);
                     // Process the value as needed
@@ -81,7 +79,6 @@ public class CardGame {
                 }
                 int value = Integer.parseInt(line);
                 pack.add(value);
-
             }
         }
         return pack;
@@ -92,6 +89,7 @@ public class CardGame {
             initialisePlayersAndDecks(numPlayers);
             allocateCards(pack);
             for (Player player : players) {
+                System.out.println("Player Initialised: "+player.getPlayerID());
                 Thread thread = new Thread(player);
                 thread.start();
             }
@@ -105,6 +103,7 @@ public class CardGame {
             Player player = new Player(i + 1);
             players.add(player);
             CardDeck deck = new CardDeck(i + 1);
+            decks.add(deck);
         }
         for (int i = 0; i <numPlayers; i++){
             players.get(i).setLHSDeckId((i + numPlayers) % numPlayers + 1);
@@ -114,20 +113,24 @@ public class CardGame {
 
     private void allocateCards(ArrayList<Integer> pack) {
         int index = 0;
-        for (int i = 0; i < numPlayers * 4; i++) {
+        int deckIndex = 0;
+        for (int i = 0; i < numPlayers; i++) {
             Card card = new Card(index, pack.get(index));
             for (int j = 0; j < 4; j++) {
-                players.get(i).addCardtoHand(j,card);
+                System.out.println("j:" + j);
+                players.get(i).addCardToHand(j, card);
             }
             index++;
         }
-        for (int i = 0; i < pack.size() - (numPlayers* 4); i++) {
+        for (int i = 0; i < pack.size() - (numPlayers * 4); i++) {
             Card card = new Card(index, pack.get(index));
-            decks.get(i).addCardtoDeck(card);
+            System.out.println("i:" + i);
+            decks.get(deckIndex).addCardToDeck(i % numPlayers, card);
             index++;
-
+        deckIndex = (deckIndex + 1) % numPlayers; // Wrap around to 0 when it reaches the number of decks
         }
     }
+
     public static boolean checkWinCondition(Card[] hand) {
         if (hand == null || hand.length == 0) {
             // Handle edge cases, like an empty array or null reference

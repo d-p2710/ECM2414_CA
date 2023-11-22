@@ -1,6 +1,4 @@
 import java.util.ArrayList;
-import java.util.List;
-//
 public class CardDeck {
 
     private final int deckID;
@@ -13,8 +11,12 @@ public class CardDeck {
     public int getDeckID(){return deckID;}
     public ArrayList<Card> getDeck(){return deck;}
 
-    public void addCardtoDeck(Card card) {
-        deck.add(card);
+    public void addCardToDeck(int index,Card card) {
+        if (index >= deck.size()){
+            this.deck.add(card);
+        } else {
+            this.deck.add(index, card);
+        }
     }
 
 }

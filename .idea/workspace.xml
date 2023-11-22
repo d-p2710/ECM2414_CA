@@ -5,19 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45572cf3-f9d4-4c27-9c4c-229ca09638f9" name="Changes" comment="">
-<<<<<<< Updated upstream
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Card.class" beforeDir="false" afterPath="$PROJECT_DIR$/src/Card.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Card.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Card.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CardDeck.class" beforeDir="false" afterPath="$PROJECT_DIR$/src/CardDeck.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CardDeck.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/CardDeck.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CardGame.class" beforeDir="false" afterPath="$PROJECT_DIR$/src/CardGame.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/CardGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/CardGame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/InvalidFileLengthException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/InvalidFileLengthException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/src/Player.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Player.java" afterDir="false" />
-=======
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ECM2414_CA.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ECM2414_CA.iml" afterDir="false" />
->>>>>>> Stashed changes
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,21 +54,6 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager">
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="ECM2414_CA" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="ECM2414_CA" />
-      <option name="filePath" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -86,22 +68,12 @@
       <workItem from="1699707623275" duration="12641000" />
       <workItem from="1700052080839" duration="625000" />
       <workItem from="1700223150532" duration="2443000" />
-<<<<<<< Updated upstream
       <workItem from="1700556868576" duration="4279000" />
-=======
-      <workItem from="1700556868576" duration="4672000" />
-      <workItem from="1700567250253" duration="39000" />
-      <workItem from="1700567297880" duration="11000" />
-      <workItem from="1700567315167" duration="30000" />
-      <workItem from="1700567377626" duration="1157000" />
-      <workItem from="1700568544563" duration="109000" />
-      <workItem from="1700568680123" duration="30000" />
-      <workItem from="1700568740937" duration="187000" />
-      <workItem from="1700568987698" duration="1716000" />
-      <workItem from="1700584616372" duration="6000" />
-      <workItem from="1700584823499" duration="1424000" />
-      <workItem from="1700586253487" duration="2214000" />
->>>>>>> Stashed changes
+      <workItem from="1700592452893" duration="73000" />
+      <workItem from="1700592703277" duration="31000" />
+      <workItem from="1700593050406" duration="3140000" />
+      <workItem from="1700602336887" duration="3054000" />
+      <workItem from="1700605647023" duration="11022000" />
     </task>
     <servers />
   </component>

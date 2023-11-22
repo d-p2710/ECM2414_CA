@@ -1,0 +1,133 @@
+Index: src/Player.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import java.io.FileWriter;\nimport java.io.IOException;\nimport java.util.ArrayList;\n//\n\npublic class Player{\n    public int playerID;\n    public int preferredDenomination;\n    private ArrayList<Card> hand;\n    private FileWriter outputFile;\n    private int preferredCardCount;\n    private int LHSDeckId;\n    private int RHSDeckId;\n\n    public Player(int playerID) {\n        this.playerID = playerID;\n        this.preferredDenomination = playerID;\n        this.hand = new ArrayList<Card>();\n        try{\n            String outputFileName = \"Player\" +playerID+ \"_output.txt\";\n            this.outputFile=new FileWriter(outputFileName);\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n    }\n\n    public int getPlayerID() {\n        return playerID;\n    }\n\n    public int getPreferredDenomination() {\n        return preferredDenomination;\n    }\n    public void setRHSDeckId(int RHSDeckId) {this.RHSDeckId = RHSDeckId;}\n    public void setLHSDeckId(int LHSDeckId) {this.LHSDeckId = LHSDeckId;}\n\n    public void addCardtoHand(int index, Card card){\n        this.hand.set(index, card);\n    }\n    public ArrayList<Card> getHand() {\n        return hand;\n    }\n\n    public void updateOutputFile(){\n        try{\n            outputFile.write(\"player \" + this.playerID + \" current hand is \");\n            for (Card card : hand){\n                if (card != null){\n                    outputFile.write(card.getValue()+\" \");\n                }}\n            //Flush ensures data is written immediately\n            outputFile.write(\"\\n\");\n            outputFile.flush();\n        } catch (IOException e) {\n            e.printStackTrace();\n        }\n    }\n\n    public void closeOutputFile(){\n        try{\n            outputFile.close();\n        }catch (IOException e){\n            e.printStackTrace();\n        }\n    }\n    //returns the index of the card to be discarded.\n    private int chooseCardToDiscard(ArrayList<Card> hand) {\n        for (int i = 0; i< hand.size();i++){\n            if (hand.get(i).getValue() != preferredDenomination) {\n                return i;\n            }\n        }\n        //has to check win condition before this is called, so shouldnt return -1\n        return -1;\n    }\n\n\n    public Card drawCard(ArrayList<Card> deck, int deckID) throws InterruptedException, IOException {\n        while (true) {\n            synchronized (this) {\n                while (deck.isEmpty()) {\n                    wait();\n                }\n                Card drawnCard = deck.remove(0);\n                outputFile.write(\"player \" + this.playerID + \" draws a \" + drawnCard + \" from deck \" + deckID + \"\\n\");\n                int empty_index = chooseCardToDiscard(hand);\n                Card cardToDiscard = hand.get(empty_index);\n                hand.set(empty_index, drawnCard);\n                return cardToDiscard;\n\n            }\n        }\n    }\n\n    public synchronized void discardToRightDeck(ArrayList<Card> deck, Card cardToDiscard, int deckID) throws InterruptedException, IOException {\n        deck.add(cardToDiscard);\n        outputFile.write(\"player \"+this.playerID + \" discards a \" + cardToDiscard + \" to deck \" + deckID + \"\\n\");\n    }\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Player.java b/src/Player.java
+--- a/src/Player.java	(revision 6884691f5b6116a34a07046f09beb17e514c4fc5)
++++ b/src/Player.java	(date 1700593608621)
+@@ -3,7 +3,7 @@
+ import java.util.ArrayList;
+ //
+ 
+-public class Player{
++public class Player extends Thread{
+     public int playerID;
+     public int preferredDenomination;
+     private ArrayList<Card> hand;
+@@ -70,7 +70,7 @@
+                 return i;
+             }
+         }
+-        //has to check win condition before this is called, so shouldnt return -1
++        //has to check win condition before this is called, so shouldn't return -1
+         return -1;
+     }
+ 
+@@ -95,6 +95,7 @@
+     public synchronized void discardToRightDeck(ArrayList<Card> deck, Card cardToDiscard, int deckID) throws InterruptedException, IOException {
+         deck.add(cardToDiscard);
+         outputFile.write("player "+this.playerID + " discards a " + cardToDiscard + " to deck " + deckID + "\n");
++        notify();
+     }
+ 
+ }
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"45572cf3-f9d4-4c27-9c4c-229ca09638f9\" name=\"Changes\" comment=\"\">\n<<<<<<< Updated upstream\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/CardGame.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/CardGame.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/Player.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/Player.java\" afterDir=\"false\" />\n=======\n      <change beforePath=\"$PROJECT_DIR$/.idea/.gitignore\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/misc.xml\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/modules.xml\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/uiDesigner.xml\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/vcs.xml\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/ECM2414_CA.iml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/ECM2414_CA.iml\" afterDir=\"false\" />\n>>>>>>> Stashed changes\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"MarkdownSettingsMigration\">\n    <option name=\"stateVersion\" value=\"1\" />\n  </component>\n  <component name=\"ProjectId\" id=\"2XqeG3Cyttmx1oYlgVY56am67Fk\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\">{\n  &quot;keyToString&quot;: {\n    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,\n    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,\n    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,\n    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\n    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,\n    &quot;last_opened_file_path&quot;: &quot;/Users/ipekbal/Documents/Github/ECM2414_CA&quot;,\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\n    &quot;project.structure.last.edited&quot;: &quot;Global Libraries&quot;,\n    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,\n    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,\n    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;,\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\n  }\n}</component>\n  <component name=\"RunManager\">\n    <configuration default=\"true\" type=\"JetRunConfigurationType\">\n      <module name=\"ECM2414_CA\" />\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <configuration default=\"true\" type=\"KotlinStandaloneScriptRunConfigurationType\">\n      <module name=\"ECM2414_CA\" />\n      <option name=\"filePath\" />\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"45572cf3-f9d4-4c27-9c4c-229ca09638f9\" name=\"Changes\" comment=\"\" />\n      <created>1699360939401</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1699360939401</updated>\n      <workItem from=\"1699360962009\" duration=\"3236000\" />\n      <workItem from=\"1699375145439\" duration=\"4457000\" />\n      <workItem from=\"1699539670265\" duration=\"2278000\" />\n      <workItem from=\"1699707623275\" duration=\"12641000\" />\n      <workItem from=\"1700052080839\" duration=\"625000\" />\n      <workItem from=\"1700223150532\" duration=\"2443000\" />\n<<<<<<< Updated upstream\n      <workItem from=\"1700556868576\" duration=\"4279000\" />\n=======\n      <workItem from=\"1700556868576\" duration=\"4672000\" />\n      <workItem from=\"1700567250253\" duration=\"39000\" />\n      <workItem from=\"1700567297880\" duration=\"11000\" />\n      <workItem from=\"1700567315167\" duration=\"30000\" />\n      <workItem from=\"1700567377626\" duration=\"1157000\" />\n      <workItem from=\"1700568544563\" duration=\"109000\" />\n      <workItem from=\"1700568680123\" duration=\"30000\" />\n      <workItem from=\"1700568740937\" duration=\"187000\" />\n      <workItem from=\"1700568987698\" duration=\"1716000\" />\n      <workItem from=\"1700584616372\" duration=\"6000\" />\n      <workItem from=\"1700584823499\" duration=\"1424000\" />\n      <workItem from=\"1700586253487\" duration=\"2214000\" />\n>>>>>>> Stashed changes\n    </task>\n    <servers />\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 6884691f5b6116a34a07046f09beb17e514c4fc5)
++++ b/.idea/workspace.xml	(date 1700594924375)
+@@ -5,19 +5,9 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="45572cf3-f9d4-4c27-9c4c-229ca09638f9" name="Changes" comment="">
+-<<<<<<< Updated upstream
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/CardGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/CardGame.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/InvalidFileLengthException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/InvalidFileLengthException.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Player.java" afterDir="false" />
+-=======
+-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
+-      <change beforePath="$PROJECT_DIR$/ECM2414_CA.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ECM2414_CA.iml" afterDir="false" />
+->>>>>>> Stashed changes
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -57,21 +47,6 @@
+     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+   }
+ }</component>
+-  <component name="RunManager">
+-    <configuration default="true" type="JetRunConfigurationType">
+-      <module name="ECM2414_CA" />
+-      <method v="2">
+-        <option name="Make" enabled="true" />
+-      </method>
+-    </configuration>
+-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+-      <module name="ECM2414_CA" />
+-      <option name="filePath" />
+-      <method v="2">
+-        <option name="Make" enabled="true" />
+-      </method>
+-    </configuration>
+-  </component>
+   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+   <component name="TaskManager">
+     <task active="true" id="Default" summary="Default task">
+@@ -86,22 +61,10 @@
+       <workItem from="1699707623275" duration="12641000" />
+       <workItem from="1700052080839" duration="625000" />
+       <workItem from="1700223150532" duration="2443000" />
+-<<<<<<< Updated upstream
+       <workItem from="1700556868576" duration="4279000" />
+-=======
+-      <workItem from="1700556868576" duration="4672000" />
+-      <workItem from="1700567250253" duration="39000" />
+-      <workItem from="1700567297880" duration="11000" />
+-      <workItem from="1700567315167" duration="30000" />
+-      <workItem from="1700567377626" duration="1157000" />
+-      <workItem from="1700568544563" duration="109000" />
+-      <workItem from="1700568680123" duration="30000" />
+-      <workItem from="1700568740937" duration="187000" />
+-      <workItem from="1700568987698" duration="1716000" />
+-      <workItem from="1700584616372" duration="6000" />
+-      <workItem from="1700584823499" duration="1424000" />
+-      <workItem from="1700586253487" duration="2214000" />
+->>>>>>> Stashed changes
++      <workItem from="1700592452893" duration="73000" />
++      <workItem from="1700592703277" duration="31000" />
++      <workItem from="1700593050406" duration="1869000" />
+     </task>
+     <servers />
+   </component>
+Index: src/InvalidFileLengthException.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>public class InvalidFileLengthException.java extends Exception {\n    public InvalidFileLengthException() {\n\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/InvalidFileLengthException.java b/src/InvalidFileLengthException.java
+--- a/src/InvalidFileLengthException.java	(revision 6884691f5b6116a34a07046f09beb17e514c4fc5)
++++ b/src/InvalidFileLengthException.java	(date 1700592215129)
+@@ -1,5 +1,4 @@
+-public class InvalidFileLengthException.java extends Exception {
++public class InvalidFileLengthException extends Exception {
+     public InvalidFileLengthException() {
+-
+     }
+ }
+\ No newline at end of file

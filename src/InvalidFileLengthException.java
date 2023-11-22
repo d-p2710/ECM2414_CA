@@ -1,5 +1,4 @@
-public class InvalidFileLengthException.java extends Exception {
+public class InvalidFileLengthException extends Exception {
     public InvalidFileLengthException() {
-
     }
 }
