@@ -50,4 +50,8 @@ public class CardDeck {
             e.printStackTrace();
         }
     }
+
+    public String toString(){
+        return "CardDeck [cardDeck Number "+deckID+"\nDeck: "+deck+"]";
+    }
 }

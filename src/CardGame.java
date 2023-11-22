@@ -99,11 +99,17 @@ public class CardGame {
                 System.out.println("Player Initialised: "+player.getPlayerID());
                 Thread thread = new Thread(player);
                 thread.start();
+                System.out.println(player);
             }
+            for (CardDeck cardDeck: decks){
+                System.out.println(cardDeck);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     private void initialisePlayersAndDecks(int numPlayers) throws IOException {
         for (int i = 0; i < numPlayers; i++) {
@@ -121,13 +127,13 @@ public class CardGame {
     private void allocateCards(ArrayList<Integer> pack) {
         int index = 0;
         int deckIndex = 0;
-        for (int i = 0; i < numPlayers; i++) {
-            Card card = new Card(index, pack.get(index));
-            for (int j = 0; j < 4; j++) {
-                System.out.println("j:" + j);
-                players.get(i).addCardToHand(j, card);
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < numPlayers; j++) {
+                Card card = new Card(index, pack.get(index));
+                System.out.println(index);
+                players.get(j).addCardToHand(i, card);
+                index++;
             }
-            index++;
         }
         for (int i = 0; i < pack.size() - (numPlayers * 4); i++) {
             Card card = new Card(index, pack.get(index));

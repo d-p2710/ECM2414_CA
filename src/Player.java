@@ -146,6 +146,11 @@ public class Player extends Thread{
         notifyAll();
     }
 
+    @Override
+    public String toString() {
+        return "Player "+ playerID + "\nPreferred denomination: " + preferredDenomination+"\nHand: "+hand;
+    }
+
     /*
     public synchronized void discardToRightDeck(Card card, int RHSDeckId) {
         // discard a non-preferred card to the right deck
