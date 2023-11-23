@@ -74,8 +74,12 @@ public class Player{
         return -1;
     }
 
+<<<<<<< Updated upstream
 
     public Card drawCard(ArrayList<Card> deck, int deckID) throws InterruptedException, IOException {
+=======
+    public Card drawCard(List<Card> deck, int deckID) throws InterruptedException, IOException {
+>>>>>>> Stashed changes
         while (true) {
             synchronized (this) {
                 while (deck.isEmpty()) {
@@ -92,7 +96,7 @@ public class Player{
         }
     }
 
-    public synchronized void discardToRightDeck(ArrayList<Card> deck, Card cardToDiscard, int deckID) throws InterruptedException, IOException {
+    public synchronized void discardToRightDeck(List<Card> deck, Card cardToDiscard, int deckID) throws InterruptedException, IOException {
         deck.add(cardToDiscard);
         outputFile.write("player "+this.playerID + " discards a " + cardToDiscard + " to deck " + deckID + "\n");
     }

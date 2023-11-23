@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45572cf3-f9d4-4c27-9c4c-229ca09638f9" name="Changes" comment="">
+<<<<<<< Updated upstream
       <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/InvalidFileLengthException.java" afterDir="false" />
@@ -15,11 +16,28 @@
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/CardDeck.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/CardDeck.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/CardGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/CardGame.java" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/src/PlayGameRunnable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CardDeck.class" beforeDir="false" afterPath="$PROJECT_DIR$/src/CardDeck.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CardDeck.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/CardDeck.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CardGame.class" beforeDir="false" afterPath="$PROJECT_DIR$/src/CardGame.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CardGame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/CardGame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/src/Player.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Player.java" afterDir="false" />
+>>>>>>> Stashed changes
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -87,6 +105,7 @@
       <workItem from="1699707623275" duration="12641000" />
       <workItem from="1700052080839" duration="625000" />
       <workItem from="1700223150532" duration="2443000" />
+<<<<<<< Updated upstream
       <workItem from="1700556868576" duration="4672000" />
       <workItem from="1700567250253" duration="39000" />
       <workItem from="1700567297880" duration="11000" />
@@ -99,6 +118,17 @@
       <workItem from="1700584616372" duration="6000" />
       <workItem from="1700584823499" duration="1424000" />
       <workItem from="1700586253487" duration="2069000" />
+=======
+      <workItem from="1700556868576" duration="4279000" />
+      <workItem from="1700592452893" duration="73000" />
+      <workItem from="1700592703277" duration="31000" />
+      <workItem from="1700593050406" duration="3140000" />
+      <workItem from="1700602336887" duration="3054000" />
+      <workItem from="1700605647023" duration="14157000" />
+      <workItem from="1700653870315" duration="3376000" />
+      <workItem from="1700687970101" duration="791000" />
+      <workItem from="1700737519330" duration="6141000" />
+>>>>>>> Stashed changes
     </task>
     <servers />
   </component>

@@ -11,7 +11,11 @@ public class CardDeck {
         this.deck = new ArrayList<Card>();
     }
     public int getDeckID(){return deckID;}
+<<<<<<< Updated upstream
     public ArrayList<Card> getDeck(){return deck;}
+=======
+    public List<Card> getDeck(){return deck;}
+>>>>>>> Stashed changes
 
     public void addCardtoDeck(Card card) {
         deck.add(card);
