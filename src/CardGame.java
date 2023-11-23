@@ -99,9 +99,7 @@ public class CardGame {
         try {
             initialisePlayersAndDecks(numPlayers);
             allocateCards(pack);
-<<<<<<< Updated upstream
-            //playGame();
-=======
+
             for (Player player : players) {
                 System.out.println("Player Initialised: "+player.getPlayerID());
                 PlayGameRunnable playGameRunnable = new PlayGameRunnable(player, decks);
@@ -111,8 +109,6 @@ public class CardGame {
                 System.out.println(thread);
             }
 
-
->>>>>>> Stashed changes
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -164,9 +160,4 @@ public class CardGame {
         // All numbers are the same
         return true;
     }
-<<<<<<< Updated upstream
-=======
-
-
->>>>>>> Stashed changes
 }
