@@ -51,14 +51,14 @@ public class Player implements Runnable{
 
     public void updateOutputFile(){
         try{
-            outputFile.write("player " + this.playerID + " current hand is ");
+            this.outputFile.write("player " + this.playerID + " current hand is ");
             for (Card card : hand){
                 if (card != null){
                     outputFile.write(card.getValue()+" ");
                 }}
             //Flush ensures data is written immediately
-            outputFile.write("\n");
-            outputFile.flush();
+            this.outputFile.write("\n");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -81,27 +81,37 @@ public class Player implements Runnable{
         //has to check win condition before this is called, so shouldnt return -1
         return -1;
     }
+    //takes in the LHSDeck and its deckID
     public Card drawCard(ArrayList<Card> deck, int deckID) throws InterruptedException, IOException {
 
         while (true) {
             synchronized (this) {
+                //doesnt draw a card while the LHSDeck is empty
                 while (deck.isEmpty()) {
                     wait();
                 }
+                //removes the card drawn from the LHSDeck
                 Card drawnCard = deck.remove(0);
                 outputFile.write("player " + this.playerID + " draws a " + drawnCard + " from deck " + deckID + "\n");
-                int empty_index = chooseCardToDiscard(hand);
-                Card cardToDiscard = hand.get(empty_index);
-                hand.set(empty_index, drawnCard);
-                return cardToDiscard;
+                //adds the card drawn to the hand
+                hand.add(drawnCard);
+                //returns drawn card
+                return drawnCard;
 
             }
         }
     }
-
-    public synchronized void discardToRightDeck(ArrayList<Card> deck, Card cardToDiscard, int deckID) throws InterruptedException, IOException {
+    //takes in the RHSDeck and its deckID
+    public synchronized Card discardToRightDeck(ArrayList<Card> deck, int deckID) throws InterruptedException, IOException {
+        //chooses a card to discard
+        int discardCardIndex = chooseCardToDiscard(hand);
+        Card cardToDiscard = hand.get(discardCardIndex);
+        //removes the card from hand
+        hand.remove(discardCardIndex);
+        //adds the discarded card to RHSDeck
         deck.add(cardToDiscard);
         outputFile.write("player "+this.playerID + " discards a " + cardToDiscard + " to deck " + deckID + "\n");
+        return cardToDiscard;
     }
     public static boolean checkWinCondition(ArrayList<Card> hand) {
         if (hand == null || hand.size() == 0) {
@@ -136,8 +146,8 @@ public class Player implements Runnable{
     public void run() {
         while(!checkWinCondition(hand)) {
             try {
-                Card cardToDiscard = drawCard(LHSDeck.getDeck(), LHSDeck.getDeckID());
-                discardToRightDeck(RHSDeck.getDeck(), cardToDiscard, RHSDeck.getDeckID());
+                drawCard(LHSDeck.getDeck(), LHSDeck.getDeckID());
+                discardToRightDeck(RHSDeck.getDeck(), RHSDeck.getDeckID());
                 updateOutputFile();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
