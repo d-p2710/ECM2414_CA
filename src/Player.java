@@ -1,24 +1,21 @@
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+//
 
-public class Player extends Thread{
+public class Player implements Runnable{
     public int playerID;
     public int preferredDenomination;
     private ArrayList<Card> hand;
     private FileWriter outputFile;
     private int preferredCardCount;
-    private int LHSDeckId;
-    private int RHSDeckId;
-    private volatile boolean hasWon;
-
+    private CardDeck LHSDeck;
+    private CardDeck RHSDeck;
 
     public Player(int playerID) {
         this.playerID = playerID;
         this.preferredDenomination = playerID;
-        this.hand = new ArrayList<>();
-        this.hasWon=false;
+        this.hand = new ArrayList<Card>();
         try{
             String outputFileName = "Player" +playerID+ "_output.txt";
             this.outputFile=new FileWriter(outputFileName);
@@ -33,21 +30,16 @@ public class Player extends Thread{
     public int getPreferredDenomination() {
         return preferredDenomination;
     }
-    public void setRHSDeckId(int RHSDeckId) {this.RHSDeckId = RHSDeckId;}
-    public void setLHSDeckId(int LHSDeckId) {this.LHSDeckId = LHSDeckId;}
+    public void setRHSDeck(CardDeck RHSDeckId) {this.RHSDeck = RHSDeck;}
+    public void setLHSDeck(CardDeck LHSDeckId) {this.LHSDeck = LHSDeck;}
 
-    public boolean getHasWon() {
-        return hasWon;
+    public void addCardtoHand(Card card){
+        this.hand.add(card);
     }
     public ArrayList<Card> getHand() {
         return hand;
     }
-    public int getLHSDeckId() {
-        return LHSDeckId;
-    }
-    public int getRHSDeckId() {
-        return RHSDeckId;
-    }
+
 
     public void addCardToHand(int index, Card card){
         if (index >= hand.size()){
@@ -57,7 +49,7 @@ public class Player extends Thread{
         }
     }
 
-    public synchronized void updateOutputFile(){
+    public void updateOutputFile(){
         try{
             outputFile.write("player " + this.playerID + " current hand is ");
             for (Card card : hand){
@@ -79,39 +71,6 @@ public class Player extends Thread{
             e.printStackTrace();
         }
     }
-
-    public synchronized void recordWin() {
-        String output = "player" + playerID + " wins";
-        System.out.println(output);
-        writeToOutputFile(output);
-        hasWon = true;
-    }
-
-    public void recordExit(List<Card> finalHand) {
-        String output = "player" + playerID + " exits";
-        System.out.println(output);
-        writeToOutputFile(output);
-        recordFinalState(finalHand);
-    }
-
-    public void recordFinalState(List<Card> finalCards) {
-        StringBuilder output = new StringBuilder("deck" + playerID + " final hand: ");
-        for (Card card : finalCards) {
-            output.append(card.getValue());
-        }
-        writeToOutputFile(output.toString());
-    }
-
-
-    private void writeToOutputFile(String output) {
-        try {
-            outputFile.write(output + "\n");
-            outputFile.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     //returns the index of the card to be discarded.
     private int chooseCardToDiscard(ArrayList<Card> hand) {
         for (int i = 0; i< hand.size();i++){
@@ -119,11 +78,11 @@ public class Player extends Thread{
                 return i;
             }
         }
-        //has to check win condition before this is called, so shouldn't return -1
+        //has to check win condition before this is called, so shouldnt return -1
         return -1;
     }
-
     public Card drawCard(ArrayList<Card> deck, int deckID) throws InterruptedException, IOException {
+
         while (true) {
             synchronized (this) {
                 while (deck.isEmpty()) {
@@ -134,8 +93,8 @@ public class Player extends Thread{
                 int empty_index = chooseCardToDiscard(hand);
                 Card cardToDiscard = hand.get(empty_index);
                 hand.set(empty_index, drawnCard);
-                notifyAll();
                 return cardToDiscard;
+
             }
         }
     }
@@ -143,44 +102,52 @@ public class Player extends Thread{
     public synchronized void discardToRightDeck(ArrayList<Card> deck, Card cardToDiscard, int deckID) throws InterruptedException, IOException {
         deck.add(cardToDiscard);
         outputFile.write("player "+this.playerID + " discards a " + cardToDiscard + " to deck " + deckID + "\n");
-        notifyAll();
     }
+    public static boolean checkWinCondition(ArrayList<Card> hand) {
+        if (hand == null || hand.size() == 0) {
+            // Handle edge cases, like an empty array or null reference
+            return false;
+        }
 
+        int firstNumber = hand.get(0).getValue();
+
+        for (int i = 1; i < hand.size(); i++) {
+            if (hand.get(i).getValue() != firstNumber) {
+                // If any number is different, return false
+                return false;
+            }
+        }
+
+        // All numbers are the same
+        return true;
+    }
     @Override
     public String toString() {
-        return "Player "+ playerID + "\nPreferred denomination: " + preferredDenomination+"\nHand: "+hand;
-    }
-
-    /*
-    public synchronized void discardToRightDeck(Card card, int RHSDeckId) {
-        // discard a non-preferred card to the right deck
-        hand.remove(card);
-        writeToOutputFile("player " + playerID + "discards a ");
-        recordDiscard(card, playerID, RHSDeckId);
-    }
-    public synchronized void drawCard(Card card, int LHSDeckId) {
-        synchronized (this) {
-            if (card.getDenomination() == preferredDenomination) {
-                for (int i = 0; i < hand.size(); i++) {
-                    if (hand.get(i) == null) {
-                        hand.set(i, card);
-                        recordDraw(card, playerID, LHSDeckId);
-                        return;
-                    }
-                }
-            } else {
-                discardToRightDeck(card, RHSDeckId);
+        StringBuilder handList= new StringBuilder();
+        for (int i = 0; i < hand.size(); i++) {
+            handList.append(hand.get(i).getValue());
+            if (i < hand.size() - 1) {
+                handList.append(", ");
             }
+        }
+        return "Player "+ playerID + "\nPreferred denomination: " + preferredDenomination+"\nHand: "+handList;
+    }
+    @Override
+    public void run() {
+        while(!checkWinCondition(hand)) {
+            try {
+                Card cardToDiscard = drawCard(LHSDeck.getDeck(), LHSDeck.getDeckID());
+                discardToRightDeck(RHSDeck.getDeck(), cardToDiscard, RHSDeck.getDeckID());
+                updateOutputFile();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
         }
     }
 
-    */
-//    @Override
-//    public void run() {
-//        while (!hasWon) {
-//            Thread.onSpinWait();
-//        }
-//    }
 }
 
 // Maybe shuffle cards, otherwise when using th same deck the result of the game could be very predictable & consistent, therefore cards need to be randomised.
