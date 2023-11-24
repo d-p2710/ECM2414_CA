@@ -12,7 +12,7 @@ public class CardDeck {
     }
     public int getDeckID(){return deckID;}
 
-    public List<Card> getDeck(){return deck;}
+    public ArrayList<Card> getDeck(){return deck;}
 
     public void addCardtoDeck(Card card) {
         deck.add(card);

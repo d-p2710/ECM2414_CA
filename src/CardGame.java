@@ -31,6 +31,8 @@ public class CardGame {
         System.out.print("Enter the number of players: ");
         numPlayers = scanner.nextInt();
         String filePath;
+
+
         // Process the input pack file
         while (true) {
             // Get the location of the input file
@@ -84,17 +86,14 @@ public class CardGame {
         return pack;
     }
 
-    private CardGame(int numPlayers) {
-        CardGame.numPlayers = numPlayers;
-        players = new ArrayList<Player>();
-        decks = new ArrayList<CardDeck>();
-    }
 
     public void startGame(ArrayList<Integer> pack) {
         try {
+            players = new ArrayList<Player>();
+            System.out.println(players);
+            decks = new ArrayList<CardDeck>();
             initialisePlayersAndDecks(numPlayers);
             allocateCards(pack);
-
             for (Player player: players) {
                 Thread thread = new Thread(player);
                 thread.start();
@@ -114,13 +113,13 @@ public class CardGame {
             CardDeck deck = new CardDeck(i + 1);
             decks.add(deck);
         }
-        System.out.println(players);
     }
 
     private void allocateCards(ArrayList<Integer> pack) {
         int index = 0;
         int deckIndex =0;
-        for (int i = 0; i < numPlayers * 4; i++) {
+        for (int i = 0; i < numPlayers; i++) {
+            System.out.println(index);
             Card card = new Card(index, pack.get(index));
             for (int j = 0; j < 4; j++) {
                 players.get(j).addCardtoHand(card);
@@ -138,6 +137,8 @@ public class CardGame {
             players.get(i).setLHSDeck(decks.get(i));
             players.get(i).setRHSDeck(decks.get((i + 1)%numPlayers));
         }
+        //System.out.println(players);
+        //System.out.println(decks);
     }
 
 }

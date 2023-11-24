@@ -114,8 +114,30 @@ public class Player implements Runnable{
         return true;
     }
     @Override
+    public String toString() {
+        StringBuilder handList= new StringBuilder();
+        for (int i = 0; i < hand.size(); i++) {
+            handList.append(hand.get(i).getValue());
+            if (i < hand.size() - 1) {
+                handList.append(", ");
+            }
+        }
+        return "Player "+ playerID + "\nPreferred denomination: " + preferredDenomination+"\nHand: "+handList;
+    }
+    @Override
     public void run() {
+        while(!checkWinCondition(hand)) {
+            try {
+                Card cardToDiscard = drawCard(LHSDeck.getDeck(), LHSDeck.getDeckID());
+                discardToRightDeck(RHSDeck.getDeck(), cardToDiscard, RHSDeck.getDeckID());
+                updateOutputFile();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
+        }
     }
 
 }
