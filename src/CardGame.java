@@ -1,13 +1,10 @@
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Stream;
 import java.io.BufferedReader;
 import java.io.FileReader;
+
+import static java.lang.Integer.parseInt;
 
 public class CardGame {
     // CardGame is a singleton class as once instantiated we don't want multiple games running only one at a given time.
@@ -27,7 +24,7 @@ public class CardGame {
     private static int numPlayers;
     private ArrayList<Player> players;
     private ArrayList<CardDeck> decks;
-    private static int[] pack;
+    private static ArrayList<Integer> pack = new ArrayList<>();
     public static void main(String[] args) throws IOException {
         // Read the number of players from the command-line input
         Scanner scanner = new Scanner(System.in);
@@ -61,9 +58,8 @@ public class CardGame {
                     System.err.println("Error: Input pack file is incomplete.");
                     return;
                 }
-
                 try {
-                    int value = Integer.parseInt(line);
+                    int value = parseInt(line);
                     // Process the value as needed
                     System.out.println("Read value: " + value);
                 } catch (NumberFormatException e) {
@@ -74,16 +70,15 @@ public class CardGame {
         }
     }
 
-    private static int[] readFileIntoPack(int n, String filePath) throws IOException{
+    private static ArrayList<Integer> readFileIntoPack(int n, String filePath) throws IOException{
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             for (int i = 0; i < 8 * n; i++) {
                 String line = reader.readLine();
                 if (line == null) {
                     throw new IOException("Input pack file is incomplete.");
                 }
-                int value = Integer.parseInt(line);
-                pack[i] = value;
-
+                int value = parseInt(line);
+                pack.add(value);
             }
         }
         return pack;
@@ -95,15 +90,13 @@ public class CardGame {
         decks = new ArrayList<CardDeck>();
     }
 
-    public void startGame(int[] pack) {
+    public void startGame(ArrayList<Integer> pack) {
         try {
             initialisePlayersAndDecks(numPlayers);
             allocateCards(pack);
 
-            for (Player player : players) {
-                System.out.println("Player Initialised: "+player.getPlayerID());
-                PlayGameRunnable playGameRunnable = new PlayGameRunnable(player, decks);
-                Thread thread = new Thread(playGameRunnable);
+            for (Player player: players) {
+                Thread thread = new Thread(player);
                 thread.start();
                 thread.join();
                 System.out.println(thread);
@@ -119,45 +112,32 @@ public class CardGame {
             Player player = new Player(i + 1);
             players.add(player);
             CardDeck deck = new CardDeck(i + 1);
+            decks.add(deck);
+        }
+        System.out.println(players);
+    }
+
+    private void allocateCards(ArrayList<Integer> pack) {
+        int index = 0;
+        int deckIndex =0;
+        for (int i = 0; i < numPlayers * 4; i++) {
+            Card card = new Card(index, pack.get(index));
+            for (int j = 0; j < 4; j++) {
+                players.get(j).addCardtoHand(card);
+                index++;
+            }
+
+        }
+        for (int i = 0; i < pack.size() - (numPlayers* 4); i++) {
+            Card card = new Card(index, pack.get(index));
+            decks.get(deckIndex).addCardtoDeck(card);
+            index++;
+            deckIndex = (deckIndex + 1) % numPlayers;
         }
         for (int i = 0; i <numPlayers; i++){
-            players.get(i).setLHSDeckId((i + numPlayers) % numPlayers + 1);
-            players.get(i).setRHSDeckId(i == 0 ? numPlayers : i + 1);
+            players.get(i).setLHSDeck(decks.get(i));
+            players.get(i).setRHSDeck(decks.get((i + 1)%numPlayers));
         }
     }
 
-    private void allocateCards(int[] pack) {
-        int index = 0;
-        for (int i = 0; i < numPlayers * 4; i++) {
-            Card card = new Card(index, pack[index]);
-            for (int j = 0; j < 4; j++) {
-                players.get(i).addCardtoHand(j,card);
-            }
-            index++;
-        }
-        for (int i = 0; i < pack.length - (numPlayers* 4); i++) {
-            Card card = new Card(index, pack[index]);
-            decks.get(i).addCardtoDeck(card);
-            index++;
-
-        }
-    }
-    public static boolean checkWinCondition(Card[] hand) {
-        if (hand == null || hand.length == 0) {
-            // Handle edge cases, like an empty array or null reference
-            return false;
-        }
-
-        int firstNumber = hand[0].getValue();
-
-        for (int i = 1; i < hand.length; i++) {
-            if (hand[i].getValue() != firstNumber) {
-                // If any number is different, return false
-                return false;
-            }
-        }
-
-        // All numbers are the same
-        return true;
-    }
 }

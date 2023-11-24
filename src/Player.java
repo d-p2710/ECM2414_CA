@@ -3,14 +3,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 //
 
-public class Player{
+public class Player implements Runnable{
     public int playerID;
     public int preferredDenomination;
     private ArrayList<Card> hand;
     private FileWriter outputFile;
     private int preferredCardCount;
-    private int LHSDeckId;
-    private int RHSDeckId;
+    private CardDeck LHSDeck;
+    private CardDeck RHSDeck;
 
     public Player(int playerID) {
         this.playerID = playerID;
@@ -31,11 +31,11 @@ public class Player{
     public int getPreferredDenomination() {
         return preferredDenomination;
     }
-    public void setRHSDeckId(int RHSDeckId) {this.RHSDeckId = RHSDeckId;}
-    public void setLHSDeckId(int LHSDeckId) {this.LHSDeckId = LHSDeckId;}
+    public void setRHSDeck(CardDeck RHSDeckId) {this.RHSDeck = RHSDeck;}
+    public void setLHSDeck(CardDeck LHSDeckId) {this.LHSDeck = LHSDeck;}
 
-    public void addCardtoHand(int index, Card card){
-        this.hand.set(index, card);
+    public void addCardtoHand(Card card){
+        this.hand.add(card);
     }
     public ArrayList<Card> getHand() {
         return hand;
@@ -73,13 +73,8 @@ public class Player{
         //has to check win condition before this is called, so shouldnt return -1
         return -1;
     }
-
-<<<<<<< Updated upstream
-
     public Card drawCard(ArrayList<Card> deck, int deckID) throws InterruptedException, IOException {
-=======
-    public Card drawCard(List<Card> deck, int deckID) throws InterruptedException, IOException {
->>>>>>> Stashed changes
+
         while (true) {
             synchronized (this) {
                 while (deck.isEmpty()) {
@@ -96,9 +91,31 @@ public class Player{
         }
     }
 
-    public synchronized void discardToRightDeck(List<Card> deck, Card cardToDiscard, int deckID) throws InterruptedException, IOException {
+    public synchronized void discardToRightDeck(ArrayList<Card> deck, Card cardToDiscard, int deckID) throws InterruptedException, IOException {
         deck.add(cardToDiscard);
         outputFile.write("player "+this.playerID + " discards a " + cardToDiscard + " to deck " + deckID + "\n");
+    }
+    public static boolean checkWinCondition(ArrayList<Card> hand) {
+        if (hand == null || hand.size() == 0) {
+            // Handle edge cases, like an empty array or null reference
+            return false;
+        }
+
+        int firstNumber = hand.get(0).getValue();
+
+        for (int i = 1; i < hand.size(); i++) {
+            if (hand.get(i).getValue() != firstNumber) {
+                // If any number is different, return false
+                return false;
+            }
+        }
+
+        // All numbers are the same
+        return true;
+    }
+    @Override
+    public void run() {
+
     }
 
 }
