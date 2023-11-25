@@ -30,8 +30,8 @@ public class Player implements Runnable{
     public int getPreferredDenomination() {
         return preferredDenomination;
     }
-    public void setRHSDeck(CardDeck RHSDeckId) {this.RHSDeck = RHSDeck;}
-    public void setLHSDeck(CardDeck LHSDeckId) {this.LHSDeck = LHSDeck;}
+    public void setRHSDeck(CardDeck RHSDeck) {this.RHSDeck = RHSDeck;}
+    public void setLHSDeck(CardDeck LHSDeck) {this.LHSDeck = LHSDeck;}
 
     public void addCardtoHand(Card card){
         this.hand.add(card);
@@ -39,16 +39,7 @@ public class Player implements Runnable{
     public ArrayList<Card> getHand() {
         return hand;
     }
-
-
-    public void addCardToHand(int index, Card card){
-        if (index >= hand.size()){
-            this.hand.add(index, card);
-        } else {
-            this.hand.add(card);
-        }
-    }
-
+    
     public void updateOutputFile(){
         try{
             this.outputFile.write("player " + this.playerID + " current hand is ");
@@ -73,13 +64,13 @@ public class Player implements Runnable{
     }
     //returns the index of the card to be discarded.
     private int chooseCardToDiscard(ArrayList<Card> hand) {
-        for (int i = 0; i< hand.size();i++){
+        for (int i = 0; i < hand.size(); i++) {
             if (hand.get(i).getValue() != preferredDenomination) {
                 return i;
             }
         }
-        //has to check win condition before this is called, so shouldnt return -1
         return -1;
+        //has to check win condition before this is called, so shouldnt return -1
     }
     //takes in the LHSDeck and its deckID
     public Card drawCard(ArrayList<Card> deck, int deckID) throws InterruptedException, IOException {
@@ -92,9 +83,11 @@ public class Player implements Runnable{
                 }
                 //removes the card drawn from the LHSDeck
                 Card drawnCard = deck.remove(0);
-                outputFile.write("player " + this.playerID + " draws a " + drawnCard + " from deck " + deckID + "\n");
+                System.out.println("\nplayer " + this.playerID + " draws a " + drawnCard.getValue() + " from deck " + deckID + "\n");
+                //outputFile.write("player " + this.playerID + " draws a " + drawnCard + " from deck " + deckID + "\n");
                 //adds the card drawn to the hand
                 hand.add(drawnCard);
+
                 //returns drawn card
                 return drawnCard;
 
@@ -110,7 +103,9 @@ public class Player implements Runnable{
         hand.remove(discardCardIndex);
         //adds the discarded card to RHSDeck
         deck.add(cardToDiscard);
-        outputFile.write("player "+this.playerID + " discards a " + cardToDiscard + " to deck " + deckID + "\n");
+
+        System.out.println("\nplayer "+this.playerID + " discards a " + cardToDiscard.getValue() + " to deck " + deckID + "\n");
+        //outputFile.write("player "+this.playerID + " discards a " + cardToDiscard + " to deck " + deckID + "\n");
         return cardToDiscard;
     }
     public static boolean checkWinCondition(ArrayList<Card> hand) {
@@ -142,19 +137,21 @@ public class Player implements Runnable{
         }
         return "Player "+ playerID + "\nPreferred denomination: " + preferredDenomination+"\nHand: "+handList;
     }
+
     @Override
     public void run() {
         while(!checkWinCondition(hand)) {
             try {
                 drawCard(LHSDeck.getDeck(), LHSDeck.getDeckID());
-                discardToRightDeck(RHSDeck.getDeck(), RHSDeck.getDeckID());
+                if (!checkWinCondition(hand)) {
+                    discardToRightDeck(RHSDeck.getDeck(), RHSDeck.getDeckID());
+                }
                 updateOutputFile();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
         }
     }
 
