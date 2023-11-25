@@ -25,6 +25,7 @@ public class CardGame {
     private ArrayList<Player> players;
     private ArrayList<CardDeck> decks;
     private static ArrayList<Integer> pack = new ArrayList<>();
+    public boolean gameOver = true;
     public static void main(String[] args) throws IOException {
         // Read the number of players from the command-line input
         Scanner scanner = new Scanner(System.in);
@@ -63,7 +64,7 @@ public class CardGame {
                 try {
                     int value = parseInt(line);
                     // Process the value as needed
-                    System.out.println("Read value: " + value);
+                    //System.out.println("Read value: " + value);
                 } catch (NumberFormatException e) {
                     System.err.println("Error: Invalid integer in input pack file.");
                     return;
@@ -91,15 +92,26 @@ public class CardGame {
     public void startGame(ArrayList<Integer> pack) {
         try {
             players = new ArrayList<Player>();
-            System.out.println(players);
+            //System.out.println(players);
             decks = new ArrayList<CardDeck>();
             initialisePlayersAndDecks(numPlayers);
             allocateCards(pack);
-            for (Player player: players) {
-                Thread thread = new Thread(player);
-                thread.start();
-                thread.join();
-                System.out.println(thread);
+            Thread playerThreads[] = new Thread[numPlayers];
+            for (int i = 0; i < numPlayers; i++) {
+                playerThreads[i] = new Thread(players.get(i));
+                playerThreads[i].start();
+            }
+            while(!gameOver) {
+                for (Thread thread: playerThreads) {
+                    if (!thread.isAlive()) {
+                        gameOver = true;
+                        break;
+                    }
+                }
+                for (Thread thread: playerThreads) {
+                    thread.interrupt();
+                }
+
             }
 
         } catch (Exception e) {
@@ -107,7 +119,7 @@ public class CardGame {
         }
     }
 
-    private void initialisePlayersAndDecks(int numPlayers) {
+    private void initialisePlayersAndDecks(int numPlayers) throws IOException {
         for (int i = 0; i < numPlayers; i++) {
             Player player = new Player(i + 1);
             players.add(player);
@@ -119,10 +131,9 @@ public class CardGame {
     private void allocateCards(ArrayList<Integer> pack) {
         int index = 0;
         int deckIndex =0;
-        for (int i = 0; i < numPlayers; i++) {
-            System.out.println(index);
-            Card card = new Card(index, pack.get(index));
-            for (int j = 0; j < 4; j++) {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < numPlayers; j++) {
+                Card card = new Card(index, pack.get(index));
                 players.get(j).addCardtoHand(card);
                 index++;
             }
