@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.BufferedReader;
@@ -25,7 +26,7 @@ public class CardGame {
     private ArrayList<Player> players;
     private ArrayList<CardDeck> decks;
     private static ArrayList<Integer> pack = new ArrayList<>();
-    public boolean gameOver = true;
+    private volatile boolean gameOver = false;
     public static void main(String[] args) throws IOException {
         // Read the number of players from the command-line input
         Scanner scanner = new Scanner(System.in);
@@ -40,9 +41,9 @@ public class CardGame {
             System.out.print("Please enter location of pack to load: ");
             filePath = scanner.next();
             try {
-                processInputPack(numPlayers, filePath);
-                // If the processing is successful, break out of the loop
-                break;
+                if (processInputPack(numPlayers, filePath)){
+                    break;
+                }
             } catch (IOException e) {
                 System.err.println("Error reading the input pack file: " + e.getMessage());
                 // Request a valid pack file in case of an error
@@ -50,16 +51,17 @@ public class CardGame {
         }
         pack = readFileIntoPack(numPlayers,filePath);
         CardGame game = CardGame.getInstance();
-        game.startGame(pack);
+            game.startGame(pack);
+
     }
 
-    private static void processInputPack(int n, String filePath) throws IOException {
+    private static boolean processInputPack(int n, String filePath) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             for (int i = 0; i < 8 * n; i++) {
                 String line = reader.readLine();
                 if (line == null) {
                     System.err.println("Error: Input pack file is incomplete.");
-                    return;
+                    return false;
                 }
                 try {
                     int value = parseInt(line);
@@ -67,9 +69,10 @@ public class CardGame {
                     //System.out.println("Read value: " + value);
                 } catch (NumberFormatException e) {
                     System.err.println("Error: Invalid integer in input pack file.");
-                    return;
+                    return false;
                 }
             }
+            return true;
         }
     }
 
@@ -104,16 +107,16 @@ public class CardGame {
             while(!gameOver) {
                 for (Thread thread: playerThreads) {
                     if (!thread.isAlive()) {
+                        System.out.println("Game over");
                         gameOver = true;
                         break;
                     }
                 }
-                for (Thread thread: playerThreads) {
-                    thread.interrupt();
-                }
-
             }
-
+            for (Thread thread : playerThreads) {
+                thread.interrupt();
+            }
+            return;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -121,7 +124,7 @@ public class CardGame {
 
     private void initialisePlayersAndDecks(int numPlayers) throws IOException {
         for (int i = 0; i < numPlayers; i++) {
-            Player player = new Player(i + 1);
+            Player player = new Player(i + 1,gameOver);
             players.add(player);
             CardDeck deck = new CardDeck(i + 1);
             decks.add(deck);
