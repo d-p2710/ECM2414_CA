@@ -99,7 +99,7 @@ public class CardGame {
             decks = new ArrayList<CardDeck>();
             initialisePlayersAndDecks(numPlayers);
             allocateCards(pack);
-            Thread playerThreads[] = new Thread[numPlayers];
+            Thread[] playerThreads = new Thread[numPlayers];
             for (int i = 0; i < numPlayers; i++) {
                 playerThreads[i] = new Thread(players.get(i));
                 playerThreads[i].start();
