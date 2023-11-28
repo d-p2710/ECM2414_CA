@@ -1,6 +1,6 @@
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -27,16 +27,24 @@ public class CardGame {
     private ArrayList<CardDeck> decks;
     private static ArrayList<Integer> pack = new ArrayList<>();
     private volatile boolean gameOver = false;
+
     public static void main(String[] args) throws IOException {
         // Read the number of players from the command-line input
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the number of players: ");
-        numPlayers = scanner.nextInt();
         String filePath;
-
-
+        boolean validPlayerNo = false;
         // Process the input pack file
         while (true) {
+            Scanner scanner = new Scanner(System.in);
+            if (!validPlayerNo) {
+                try {
+                    System.out.print("Enter the number of players: ");
+                    numPlayers = scanner.nextInt();
+                } catch (InputMismatchException e) {
+                    System.out.println("Invalid input for number of players.");
+                    continue;
+                }
+            }
+            validPlayerNo = true;
             // Get the location of the input file
             System.out.print("Please enter location of pack to load: ");
             filePath = scanner.next();
@@ -51,7 +59,7 @@ public class CardGame {
         }
         pack = readFileIntoPack(numPlayers,filePath);
         CardGame game = CardGame.getInstance();
-            game.startGame(pack);
+        game.startGame(pack);
 
     }
 
@@ -65,8 +73,6 @@ public class CardGame {
                 }
                 try {
                     int value = parseInt(line);
-                    // Process the value as needed
-                    //System.out.println("Read value: " + value);
                 } catch (NumberFormatException e) {
                     System.err.println("Error: Invalid integer in input pack file.");
                     return false;
@@ -94,9 +100,8 @@ public class CardGame {
 
     public void startGame(ArrayList<Integer> pack) {
         try {
-            players = new ArrayList<Player>();
-            //System.out.println(players);
-            decks = new ArrayList<CardDeck>();
+            players = new ArrayList<>();
+            decks = new ArrayList<>();
             initialisePlayersAndDecks(numPlayers);
             allocateCards(pack);
             Thread[] playerThreads = new Thread[numPlayers];
@@ -104,19 +109,29 @@ public class CardGame {
                 playerThreads[i] = new Thread(players.get(i));
                 playerThreads[i].start();
             }
+            int winner = 0;
             while(!gameOver) {
+                int count = 1;
                 for (Thread thread: playerThreads) {
                     if (!thread.isAlive()) {
+                        winner = count;
                         System.out.println("Game over");
                         gameOver = true;
                         break;
                     }
+                    count++;
                 }
             }
             for (Thread thread : playerThreads) {
+                System.out.println(winner);
                 thread.interrupt();
             }
-            return;
+            for (Player player: players){
+                player.recordFinalState(player.getHand());
+            }
+            for (CardDeck cardDeck : decks){
+                cardDeck.recordFinalState(cardDeck.getDeck());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -137,14 +152,14 @@ public class CardGame {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < numPlayers; j++) {
                 Card card = new Card(index, pack.get(index));
-                players.get(j).addCardtoHand(card);
+                players.get(j).addCardToHand(card);
                 index++;
             }
 
         }
         for (int i = 0; i < pack.size() - (numPlayers* 4); i++) {
             Card card = new Card(index, pack.get(index));
-            decks.get(deckIndex).addCardtoDeck(card);
+            decks.get(deckIndex).addCardToDeck(card);
             index++;
             deckIndex = (deckIndex + 1) % numPlayers;
         }
@@ -152,9 +167,6 @@ public class CardGame {
             players.get(i).setLHSDeck(decks.get(i));
             players.get(i).setRHSDeck(decks.get((i + 1)%numPlayers));
         }
-        //System.out.println(players);
-        //System.out.println(decks);
     }
 
 }
-
