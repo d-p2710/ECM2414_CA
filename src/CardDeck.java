@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -8,7 +7,7 @@ public class CardDeck {
 
     private final int deckID;
     private ArrayList<Card> deck;
-    private FileWriter outputFile;
+    FileWriter outputFile;
 
     public CardDeck(int deckID) throws IOException {
         this.deckID = deckID;
@@ -20,10 +19,42 @@ public class CardDeck {
 
     public ArrayList<Card> getDeck(){return deck;}
 
-    public void addCardtoDeck(Card card) {
+    public void addCardToDeck(Card card) {
         deck.add(card);
     }
 
+    public FileWriter getOutputFile() {
+        return outputFile;
+    }
+
+    public void recordFinalState(List<Card> finalCards) {
+        StringBuilder output = new StringBuilder("deck" + deckID + " contents: ");
+        for (Card card : finalCards) {
+            output.append(card.getValue()).append(",");
+        }
+        if(!finalCards.isEmpty()){
+            output.deleteCharAt(output.length()-1);
+        }
+        writeToOutputFile(output.toString());
+    }
+
+    public void writeToOutputFile(String output) {
+        try {
+            outputFile.write(output + "\n");
+            outputFile.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void closeOutputFile() {
+        try {
+            outputFile.close();
+            outputFile=null;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public String toString() {
         StringBuilder deckString = new StringBuilder("CardDeck " +deckID + "\nDeck: ");
         for (Card card: deck) {
