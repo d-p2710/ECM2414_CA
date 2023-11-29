@@ -9,9 +9,18 @@ public class Player implements Runnable{
     public int preferredDenomination;
     private ArrayList<Card> hand;
     private FileWriter outputFile;
-    private CardDeck LHSDeck;
-    private CardDeck RHSDeck;
+    CardDeck LHSDeck;
+    CardDeck RHSDeck;
     private volatile boolean gameOver;
+
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public void setHand(ArrayList<Card> hand) {
+        this.hand = hand;
+    }
     public Player(int playerID, boolean gameOver) {
         this.playerID = playerID;
         this.preferredDenomination = playerID;
@@ -77,7 +86,7 @@ public class Player implements Runnable{
         writeToOutputFile(output.toString());
     }
 
-    private void writeToOutputFile(String output) {
+    void writeToOutputFile(String output) {
         try {
             outputFile.write(output + "\n");
             outputFile.flush();
@@ -86,7 +95,7 @@ public class Player implements Runnable{
         }
     }
     //returns the index of the card to be discarded.
-    private int chooseCardToDiscard(ArrayList<Card> hand) {
+    int chooseCardToDiscard(ArrayList<Card> hand) {
         for (int i = 0; i < hand.size(); i++) {
             if (hand.get(i).getValue() != preferredDenomination) {
                 return i;
@@ -97,7 +106,6 @@ public class Player implements Runnable{
     }
     //takes in the LHSDeck and its deckID
     public Card drawCard(ArrayList<Card> deck, int deckID) throws InterruptedException, IOException {
-
         while (true) {
             synchronized (this) {
                 //doesnt draw a card while the LHSDeck is empty
@@ -107,10 +115,8 @@ public class Player implements Runnable{
                 //removes the card drawn from the LHSDeck
                 Card drawnCard = deck.remove(0);
                 writeToOutputFile("\nplayer " + this.playerID + " draws a " + drawnCard.getValue() + " from deck " + deckID + "\n");
-                //outputFile.write("player " + this.playerID + " draws a " + drawnCard + " from deck " + deckID + "\n");
                 //adds the card drawn to the hand
                 hand.add(drawnCard);
-
                 //returns drawn card
                 return drawnCard;
 
@@ -131,7 +137,6 @@ public class Player implements Runnable{
         if(checkWinCondition(hand)) {
             notifyAll();
         }
-        //outputFile.write("player "+this.playerID + " discards a " + cardToDiscard + " to deck " + deckID + "\n");
         return cardToDiscard;
     }
     public boolean checkWinCondition(ArrayList<Card> hand) {
@@ -165,23 +170,29 @@ public class Player implements Runnable{
     }
 
     @Override
-    public void run() {
-        try {
-            while (!checkWinCondition(hand) && !gameOver && !Thread.interrupted()) {
-                try {
-                    drawCard(LHSDeck.getDeck(), LHSDeck.getDeckID());
-                    if (!checkWinCondition(hand)) {
-                        discardToRightDeck(RHSDeck.getDeck(), RHSDeck.getDeckID());
+    public void run(){
+        try{
+            while(!gameOver && !Thread.interrupted()){
+                synchronized (this){
+                    if (checkWinCondition(hand)){
+                        recordWin();
                     }
-                    updateOutputFile();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                }
+                if(!gameOver){
+                    try{
+                        drawCard(LHSDeck.getDeck(), LHSDeck.getDeckID());
+                        if(!checkWinCondition(hand)){
+                            discardToRightDeck(RHSDeck.getDeck(), RHSDeck.getDeckID());
+                        }
+                        updateOutputFile();
+                    } catch (IOException e){
+                        throw new RuntimeException(e);
+                    }
                 }
             }
-            gameOver = true;
-        } catch (InterruptedException e) {
+            gameOver=true;
+        } catch (InterruptedException e){
             Thread.currentThread().interrupt();
         }
     }
-
 }
