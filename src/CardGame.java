@@ -121,9 +121,16 @@ public class CardGame {
                     }
                     count++;
                 }
+                if (gameOver){
+                    for (int i=0; i<numPlayers; i++){
+                        if (i+1!=winner){
+                            players.get(i).writeToOutputFile("Player " +winner+ " has informed player" +(i+1)+ " that player" +winner+ " has won.");
+                            playerThreads[i].interrupt();
+                        }
+                    }
+                }
             }
             for (Thread thread : playerThreads) {
-                System.out.println(winner);
                 thread.interrupt();
             }
             for (Player player: players){
