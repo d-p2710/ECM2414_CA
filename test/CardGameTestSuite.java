@@ -1,25 +1,13 @@
-import org.testng.annotations.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-//import static org.junit.Assert.*;
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+        CardGameTest.class,
+        PlayerTest.class,
+        CardTest.class,
+        CardDeckTest.class
+})
 
-public class CardGameTestSuite {
-
-    @Test
-    public void testLoadAndValidatePackFile_validFile(){
-
-    }
-    @Test
-    public void testLoadAndValidatePackFile_nonExistentFile() {
-
-    }
-    @Test
-    public void testLoadAndValidatePackFile_invalidContent(){
-
-    }
-    @Test
-    public void testLoadAndValidatePackFile_insufficientLines(){
-
-    }
-
-
+public class CardGameTestSite {
 }
